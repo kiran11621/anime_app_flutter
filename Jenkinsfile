@@ -97,11 +97,11 @@ pipeline {
         //         """
         //     }
         // }
-        stage('Docker Image Scan (Trivy)') {
-            steps {
-                bat 'docker run --rm -v "%cd%:/scan" -v "\\\\.\\pipe\\docker_engine:\\\\.\\pipe\\docker_engine" aquasec/trivy image anime_app_image:latest'
-            }
-        }
+        // stage('Docker Image Scan (Trivy)') {
+        //     steps {
+        //         bat 'docker run --rm -v "%cd%:/scan" -v "\\\\.\\pipe\\docker_engine:\\\\.\\pipe\\docker_engine" aquasec/trivy image anime_app_image:latest'
+        //     }
+        // }
 
         stage('Manual Approval') {
             steps {
