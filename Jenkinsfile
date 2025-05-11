@@ -99,13 +99,7 @@ pipeline {
         // }
         stage('Docker Image Scan (Trivy)') {
             steps {
-                script {
-                    try {
-                        sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image anime_app_image:latest'
-                    } catch (Exception e) {
-                        error("Trivy scan failed: ${e.message}")
-                    }
-                }
+                bat 'docker run --rm -v "%cd%:/scan" -v "\\\\.\\pipe\\docker_engine:\\\\.\\pipe\\docker_engine" aquasec/trivy image anime_app_image:latest'
             }
         }
 
