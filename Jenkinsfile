@@ -35,14 +35,23 @@ pipeline {
             }
         }
 
+        // stage('Secrets Scan (GitLeaks)') {
+        //     steps {
+        //         script {
+        //             echo 'Running Gitleaks Scan...'
+        //             bat """
+        //                 ${GITLEAKS_PATH} detect --source=${WORKSPACE} --no-git --verbose
+        //             """
+        //         }
+        //     }
+        // }
+
         stage('Secrets Scan (GitLeaks)') {
             steps {
-                script {
-                    echo 'Running Gitleaks Scan...'
-                    bat """
-                        ${GITLEAKS_PATH} detect --source=${WORKSPACE} --no-git --verbose
-                    """
-                }
+                echo 'Running Gitleaks Scan using Docker...'
+                bat """
+                    docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --verbose
+                """
             }
         }
 
