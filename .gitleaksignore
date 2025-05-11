@@ -1,0 +1,6 @@
+# Ignore Flutter SDK and cached binaries
+flutter/bin/
+**/*.snapshot
+**/*.js
+**/devtools/
+**/tls_cert/dummy-key.pem
