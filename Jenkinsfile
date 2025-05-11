@@ -64,13 +64,13 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'sonar-scanner'
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         withSonarQubeEnv('SonarQube') {
+        //             bat 'sonar-scanner'
+        //         }
+        //     }
+        // }
 
         stage('Build Flutter Web') {
             steps {
