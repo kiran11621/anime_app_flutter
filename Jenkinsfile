@@ -14,7 +14,7 @@ pipeline {
     }
 
     tools {
-        // Optional: You can declare SonarScanner tool here if configured in Jenkins
+        sonarQube 'SonarScanner'
     }
 
     stages {
