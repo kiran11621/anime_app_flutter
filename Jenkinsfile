@@ -3,12 +3,14 @@ pipeline {
 
     environment {
         FLUTTER_VERSION = "3.27.1-stable"
-        FLUTTER_DIR = "${WORKSPACE}/flutter"
-        APP_NAME = "my_flutter_app"
-        DOCKER_IMAGE = "my_flutter_app_image"
+        FLUTTER_DIR = "${WORKSPACE}\\flutter" // Use backslashes for Windows paths
+        APP_NAME = "anime_app"
+        DOCKER_IMAGE = "anime_app_image"
         DOCKER_TAG = "latest"
         SONAR_SCANNER_HOME = "C:\\sonarscanner\\bin"
-        PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${env.SONAR_SCANNER_HOME}"
+        GITLEAKS_PATH = "C:\\gitleaks\\gitleaks.exe"
+        TRIVY_PATH = "C:\\trivy\\trivy.exe"
+        PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${SONAR_SCANNER_HOME}" // Dynamically extend path
     }
 
     tools {
