@@ -1,17 +1,15 @@
-{
-  "allowlist": {
-    "paths": [
-      "flutter/bin/cache/.*",
-      "node_modules/.*",
-      "build/.*",
-      "ios/.*",
-      "android/.*",
-      "macos/.*",
-      "assets/.*",
-      "test/.*",
-      "example/.*",
-      ".*\\.js$",
-      ".*\\.snapshot$"
-    ]
-  }
-}
+[allowlist]
+  description = "Ignore non-sensitive files"
+  paths = [
+    "flutter/bin/cache/.*",
+    "node_modules/.*",
+    "build/.*",
+    "ios/.*",
+    "android/.*",
+    "macos/.*",
+    "assets/.*",
+    "test/.*",
+    "example/.*",
+    ".*\\.js$",
+    ".*\\.snapshot$"
+  ]
