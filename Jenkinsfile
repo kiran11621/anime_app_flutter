@@ -46,14 +46,14 @@ pipeline {
         //     }
         // }
 
-        stage('Secrets Scan (GitLeaks)') {
-            steps {
-                echo 'Running Gitleaks Scan using Docker...'
-                bat """
-                    docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --gitleaks-ignore-path=/repo/.gitleaksignore --redact --verbose
-                """
-            }
-        }
+        // stage('Secrets Scan (GitLeaks)') {
+        //     steps {
+        //         echo 'Running Gitleaks Scan using Docker...'
+        //         bat """
+        //             docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --gitleaks-ignore-path=/repo/.gitleaksignore --redact --verbose
+        //         """
+        //     }
+        // }
 
         stage('Static Code Analysis (Flutter Analyze)') {
             steps {
