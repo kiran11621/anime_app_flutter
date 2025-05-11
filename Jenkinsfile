@@ -90,11 +90,22 @@ pipeline {
             }
         }
 
+        // stage('Docker Image Scan (Trivy)') {
+        //     steps {
+        //         bat """
+        //             ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
+        //         """
+        //     }
+        // }
         stage('Docker Image Scan (Trivy)') {
             steps {
-                bat """
-                    ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
+                script {
+                    try {
+                        sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image anime_app_image:latest'
+                    } catch (Exception e) {
+                        error("Trivy scan failed: ${e.message}")
+                    }
+                }
             }
         }
 
