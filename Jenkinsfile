@@ -13,10 +13,6 @@ pipeline {
         PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${SONAR_SCANNER_HOME}" // Dynamically extend path
     }
 
-    tools {
-        sonarQube 'SonarScanner'
-    }
-
     stages {
 
         stage('Download Flutter SDK') {
