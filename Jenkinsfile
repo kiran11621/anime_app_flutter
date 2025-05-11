@@ -49,8 +49,8 @@ pipeline {
         stage('Secrets Scan (GitLeaks)') {
             steps {
                 echo 'Running Gitleaks Scan using Docker...'
-                bat """
-                    docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --exclude-path='.gitleaksignore' --redact --verbose
+                bat """ 
+                  docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose 
                 """
             }
         }

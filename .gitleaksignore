@@ -1,6 +1,15 @@
-# Ignore Flutter SDK and cached binaries
-flutter/bin/
-**/*.snapshot
-**/*.js
-**/devtools/
-**/tls_cert/dummy-key.pem
+[allowlist]
+  description = "Ignore non-sensitive files"
+  paths = [
+    "flutter/bin/cache/.*",
+    "node_modules/.*",
+    "build/.*",
+    "ios/.*",
+    "android/.*",
+    "macos/.*",
+    "assets/.*",
+    "test/.*",
+    "example/.*",
+    ".*\\.js$",
+    ".*\\.snapshot$"
+  ]
