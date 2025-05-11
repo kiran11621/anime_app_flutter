@@ -1,25 +1,17 @@
-# Ignore Flutter SDK binary and cache directories
-^flutter/bin/
-^flutter/bin/cache/
-
-# Ignore snapshot and JS files (common false positives in Flutter builds)
-.*\.snapshot$
-.*\.js$
-
-# Ignore common node_modules folder if it exists
-^node_modules/
-
-# Ignore build artifacts for Flutter
-^build/
-
-# Ignore macOS/iOS/Android generated files
-^ios/
-^android/
-^macos/
-
-# Ignore assets if not needed
-^assets/
-
-# Ignore test and example folders (optional)
-^test/
-^example/
+{
+  "allowlist": {
+    "paths": [
+      "flutter/bin/cache/.*",
+      "node_modules/.*",
+      "build/.*",
+      "ios/.*",
+      "android/.*",
+      "macos/.*",
+      "assets/.*",
+      "test/.*",
+      "example/.*",
+      ".*\\.js$",
+      ".*\\.snapshot$"
+    ]
+  }
+}
