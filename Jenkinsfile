@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo 'Running Gitleaks Scan using Docker...'
                 bat """
-                    docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --exclude-path='.gitleaksignore' --redact --verbose
+                    docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --gitleaks-ignore-path=/repo/.gitleaksignore --redact --verbose
                 """
             }
         }
