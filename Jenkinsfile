@@ -20,7 +20,7 @@ pipeline {
                 echo 'Downloading Flutter SDK...'
                 bat '''
                     curl -L https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.27.1-stable.zip -o flutter.zip
-                    powershell Expand-Archive -Path flutter.zip -DestinationPath .
+                    powershell Expand-Archive -Path flutter.zip -DestinationPath . -Force
                 '''
             }
         }
@@ -37,7 +37,12 @@ pipeline {
 
         stage('Secrets Scan (GitLeaks)') {
             steps {
-                bat 'gitleaks detect --source=. --no-git --verbose'
+                script {
+                    echo 'Running Gitleaks Scan...'
+                    bat """
+                        ${GITLEAKS_PATH} detect --source=${WORKSPACE} --no-git --verbose
+                    """
+                }
             }
         }
 
@@ -70,13 +75,17 @@ pipeline {
                     FROM nginx:alpine
                     COPY build/web /usr/share/nginx/html
                 '''
-                bat 'docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% .'
+                bat """
+                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                """
             }
         }
 
         stage('Docker Image Scan (Trivy)') {
             steps {
-                bat 'trivy image %DOCKER_IMAGE%:%DOCKER_TAG%'
+                bat """
+                    ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
+                """
             }
         }
 
@@ -90,11 +99,11 @@ pipeline {
 
         stage('Deploy to Docker') {
             steps {
-                bat '''
-                    docker stop %APP_NAME% || echo "Not running"
-                    docker rm %APP_NAME% || echo "Not found"
-                    docker run -d --name %APP_NAME% -p 8080:80 %DOCKER_IMAGE%:%DOCKER_TAG%
-                '''
+                bat """
+                    docker stop ${APP_NAME} || echo "Not running"
+                    docker rm ${APP_NAME} || echo "Not found"
+                    docker run -d --name ${APP_NAME} -p 8080:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                """
             }
         }
     }
