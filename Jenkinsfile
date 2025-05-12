@@ -177,7 +177,7 @@ View logs and details: ${env.BUILD_URL}
     }
 
     stages {
-        stage('Test Email Notification') {
+        stage('Email Notification') {
             steps {
                 emailext(
                     to: 'kiran11621@gmail.com',
@@ -227,6 +227,14 @@ View logs and details: ${env.BUILD_URL}
                 bat '''
                     flutter pub get
                     flutter analyze
+                '''
+            }
+        }
+
+        stage('Run Flutter Tests') {
+            steps {
+                bat '''
+                    flutter test test/main_test.dart
                 '''
             }
         }
