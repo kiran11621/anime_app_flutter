@@ -177,21 +177,21 @@ View logs and details: ${env.BUILD_URL}
     }
 
     stages {
-        stage('Email Notification') {
-            steps {
-                emailext(
-                    to: 'kiran11621@gmail.com',
-                    subject: "📧 Test Email from Jenkins Pipeline",
-                    body: """\
-        Hi Kiran,
+        // stage('Email Notification') {
+        //     steps {
+        //         emailext(
+        //             to: 'kiran11621@gmail.com',
+        //             subject: "📧 Test Email from Jenkins Pipeline",
+        //             body: """\
+        // Hi Kiran,
 
-        This is a test email triggered at the start of the Jenkins pipeline to verify email configuration.
+        // This is a test email triggered at the start of the Jenkins pipeline to verify email configuration.
 
-        - Jenkins
-                    """
-                )
-            }
-        }
+        // - Jenkins
+        //             """
+        //         )
+        //     }
+        // }
 
         stage('Download Flutter SDK') {
             steps {
@@ -265,21 +265,23 @@ View logs and details: ${env.BUILD_URL}
             }
         }
 
-        // stage('Docker Image Scan (Trivy)') {
-        //     steps {
-        //         bat """
-        //             ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
-        //         """
-        //     }
-        // }
-
-        stage('Manual Approval') {
+        stage('Docker Image Scan (Trivy)') {
             steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    input message: 'Approve deployment?', ok: 'Deploy'
-                }
+                echo 'Scanning Docker image for vulnerabilities...'
+                bat """
+                    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image ${DOCKER_IMAGE}:${DOCKER_TAG}
+                """
             }
         }
+
+
+        // stage('Manual Approval') {
+        //     steps {
+        //         timeout(time: 10, unit: 'MINUTES') {
+        //             input message: 'Approve deployment?', ok: 'Deploy'
+        //         }
+        //     }
+        // }
 
         stage('Deploy to Docker') {
             steps {
