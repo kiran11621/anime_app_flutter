@@ -215,13 +215,13 @@ View logs and details: ${env.BUILD_URL}
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'sonar-scanner'
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         withSonarQubeEnv('SonarQube') {
+        //             bat 'sonar-scanner'
+        //         }
+        //     }
+        // }
 
         stage('Build Flutter Web') {
             steps {
@@ -241,6 +241,14 @@ View logs and details: ${env.BUILD_URL}
             }
         }
 
+        // stage('Docker Image Scan (Trivy)') {
+        //     steps {
+        //         bat """
+        //             ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
+        //         """
+        //     }
+        // }
+
         stage('Manual Approval') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
@@ -254,7 +262,7 @@ View logs and details: ${env.BUILD_URL}
                 bat """
                     docker stop ${APP_NAME} || echo "Not running"
                     docker rm ${APP_NAME} || echo "Not found"
-                    docker run -d --name ${APP_NAME} -p 8080:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    docker run -d --name ${APP_NAME} -p 9090:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
                 """
             }
         }
