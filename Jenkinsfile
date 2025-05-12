@@ -177,6 +177,22 @@ View logs and details: ${env.BUILD_URL}
     }
 
     stages {
+        stage('Test Email Notification') {
+            steps {
+                emailext(
+                    to: 'kiran11621@gmail.com',
+                    subject: "📧 Test Email from Jenkins Pipeline",
+                    body: """\
+        Hi Kiran,
+
+        This is a test email triggered at the start of the Jenkins pipeline to verify email configuration.
+
+        - Jenkins
+                    """
+                )
+            }
+        }
+
         stage('Download Flutter SDK') {
             steps {
                 echo 'Downloading Flutter SDK...'
