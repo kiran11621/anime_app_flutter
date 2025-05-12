@@ -1,20 +1,182 @@
+// pipeline {
+//     agent any
+
+//     environment {
+//         FLUTTER_VERSION = "3.27.1-stable"
+//         FLUTTER_DIR = "${WORKSPACE}\\flutter" // Use backslashes for Windows paths
+//         APP_NAME = "anime_app"
+//         DOCKER_IMAGE = "anime_app_image"
+//         DOCKER_TAG = "latest"
+//         SONAR_SCANNER_HOME = "C:\\sonarscanner\\bin"
+//         GITLEAKS_PATH = "C:\\gitleaks\\gitleaks.exe"
+//         TRIVY_PATH = "C:\\trivy\\trivy.exe"
+//         PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${SONAR_SCANNER_HOME}" // Dynamically extend path
+//     }
+
+//     stages {
+
+//         stage('Download Flutter SDK') {
+//             steps {
+//                 echo 'Downloading Flutter SDK...'
+//                 bat '''
+//                     curl -L https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.27.1-stable.zip -o flutter.zip
+//                     powershell Expand-Archive -Path flutter.zip -DestinationPath . -Force
+//                 '''
+//             }
+//         }
+
+//         stage('Git Checks') {
+//             steps {
+//                 bat '''
+//                     git status
+//                     git rev-parse --abbrev-ref HEAD
+//                     git log -n 3
+//                 '''
+//             }
+//         }
+
+//         // stage('Secrets Scan (GitLeaks)') {
+//         //     steps {
+//         //         script {
+//         //             echo 'Running Gitleaks Scan...'
+//         //             bat """
+//         //                 ${GITLEAKS_PATH} detect --source=${WORKSPACE} --no-git --verbose
+//         //             """
+//         //         }
+//         //     }
+//         // }
+
+//         stage('Secrets Scan (GitLeaks)') {
+//             steps {
+//                 echo 'Running Gitleaks Scan using Docker...'
+//                 bat """ 
+//                   docker run --rm -v %WORKSPACE%:/repo zricethezav/gitleaks:latest detect --source=/repo --no-git --config=/repo/.gitleaks.toml --redact --verbose 
+//                 """
+//             }
+//         }
+
+//         stage('Static Code Analysis (Flutter Analyze)') {
+//             steps {
+//                 bat '''
+//                     flutter pub get
+//                     flutter analyze
+//                 '''
+//             }
+//         }
+
+//         stage('SonarQube Analysis') {
+//             steps {
+//                 withSonarQubeEnv('SonarQube') {
+//                     bat 'sonar-scanner'
+//                 }
+//             }
+//         }
+
+//         stage('Build Flutter Web') {
+//             steps {
+//                 bat 'flutter build web'
+//             }
+//         }
+
+//         stage('Docker Build') {
+//             steps {
+//                 writeFile file: 'Dockerfile', text: '''
+//                     FROM nginx:alpine
+//                     COPY build/web /usr/share/nginx/html
+//                 '''
+//                 bat """
+//                     docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+//                 """
+//             }
+//         }
+
+//         // stage('Docker Image Scan (Trivy)') {
+//         //     steps {
+//         //         bat """
+//         //             ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
+//         //         """
+//         //     }
+//         // }
+
+//         stage('Manual Approval') {
+//             steps {
+//                 timeout(time: 10, unit: 'MINUTES') {
+//                     input message: 'Approve deployment?', ok: 'Deploy'
+//                 }
+//             }
+//         }
+
+//         stage('Deploy to Docker') {
+//             steps {
+//                 bat """
+//                     docker stop ${APP_NAME} || echo "Not running"
+//                     docker rm ${APP_NAME} || echo "Not found"
+//                     docker run -d --name ${APP_NAME} -p 8080:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
+//                 """
+//             }
+//         }
+//     }
+
+//     post {
+//         success {
+//             echo '✅ Build, scan, and deploy successful!'
+//         }
+//         failure {
+//             echo '❌ Something failed. Check logs.'
+//         }
+//     }
+// }
 pipeline {
     agent any
 
     environment {
         FLUTTER_VERSION = "3.27.1-stable"
-        FLUTTER_DIR = "${WORKSPACE}\\flutter" // Use backslashes for Windows paths
+        FLUTTER_DIR = "${WORKSPACE}\\flutter"
         APP_NAME = "anime_app"
         DOCKER_IMAGE = "anime_app_image"
         DOCKER_TAG = "latest"
         SONAR_SCANNER_HOME = "C:\\sonarscanner\\bin"
         GITLEAKS_PATH = "C:\\gitleaks\\gitleaks.exe"
         TRIVY_PATH = "C:\\trivy\\trivy.exe"
-        PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${SONAR_SCANNER_HOME}" // Dynamically extend path
+        PATH = "${env.PATH};${env.FLUTTER_DIR}\\bin;${SONAR_SCANNER_HOME}"
+    }
+
+    post {
+        success {
+            echo '✅ Build, scan, and deploy successful!'
+            emailext(
+                to: 'kiran11621@gmail.com',
+                subject: "✅ ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} SUCCESS",
+                body: """\
+Hi Kiran,
+
+The Jenkins job *${env.JOB_NAME}* (Build #${env.BUILD_NUMBER}) has completed successfully. ✅
+
+View logs and details: ${env.BUILD_URL}
+
+- Jenkins
+                """
+            )
+        }
+        failure {
+            echo '❌ Something failed. Check logs.'
+            emailext(
+                to: 'kiran11621@gmail.com',
+                subject: "❌ ${env.JOB_NAME} - Build #${env.BUILD_NUMBER} FAILED",
+                body: """\
+Hi Kiran,
+
+The Jenkins job *${env.JOB_NAME}* (Build #${env.BUILD_NUMBER}) has failed. ❌
+
+View logs and details: ${env.BUILD_URL}
+
+- Jenkins
+                """
+            )
+        }
     }
 
     stages {
-
         stage('Download Flutter SDK') {
             steps {
                 echo 'Downloading Flutter SDK...'
@@ -34,17 +196,6 @@ pipeline {
                 '''
             }
         }
-
-        // stage('Secrets Scan (GitLeaks)') {
-        //     steps {
-        //         script {
-        //             echo 'Running Gitleaks Scan...'
-        //             bat """
-        //                 ${GITLEAKS_PATH} detect --source=${WORKSPACE} --no-git --verbose
-        //             """
-        //         }
-        //     }
-        // }
 
         stage('Secrets Scan (GitLeaks)') {
             steps {
@@ -90,14 +241,6 @@ pipeline {
             }
         }
 
-        stage('Docker Image Scan (Trivy)') {
-            steps {
-                bat """
-                    ${TRIVY_PATH} image ${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
-            }
-        }
-
         stage('Manual Approval') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
@@ -117,12 +260,5 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo '✅ Build, scan, and deploy successful!'
-        }
-        failure {
-            echo '❌ Something failed. Check logs.'
-        }
-    }
+    
 }
